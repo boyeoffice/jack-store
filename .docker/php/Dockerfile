@@ -20,11 +20,9 @@ RUN apk add --no-cache libpq-dev && docker-php-ext-install pdo_mysql mysqli
 # Configure non-root user
 ARG UID
 ARG GID
-ENV NON_ROOT_GROUP symfony
-ENV NON_ROOT_USER symfony
 RUN apk --no-cache add shadow && \
-	groupmod -o -g ${GID} www-data && \
-	usermod -o -u ${UID} -g www-data www-data
+	groupmod -o -g ${GID} symfony && \
+	usermod -o -u ${UID} -g symfony symfony
 
 # Nginx
 # RUN apk add --update --no-cache nginx
@@ -42,13 +40,13 @@ COPY ./.docker/php/supervisord.conf /etc/supervisord.conf
 # Source code
 ENV APP_PATH=/srv/app
 RUN mkdir ${APP_PATH} && \
-	chown www-data:www-data ${APP_PATH}
-COPY --chown=www-data:www-data ./ ${APP_PATH}
+	chown symfony:symfony ${APP_PATH}
+COPY --chown=symfony:symfony ./ ${APP_PATH}
 WORKDIR ${APP_PATH}
 
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-USER www-data
+USER symfony
 ARG BUILD_MODE=dev
 RUN if [ ${BUILD_MODE} = dev ]; \
 	then \
@@ -56,8 +54,11 @@ RUN if [ ${BUILD_MODE} = dev ]; \
 	else \
 		composer install --no-dev --no-interaction --no-progress --no-scripts --optimize-autoloader; \
 	fi;
-RUN chown -R www-data:www-data ${APP_PATH}/vendor/
+RUN chown -R symfony:symfony ${APP_PATH}/vendor/
+COPY ./.docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
 
-EXPOSE 8080
+EXPOSE 80
 
-ENTRYPOINT ["sh", "./.docker/php/run.sh"]
+COPY ./.docker/entrypoint.sh /
+
+ENTRYPOINT ["sh", "./.docker/entrypoint.sh"]
