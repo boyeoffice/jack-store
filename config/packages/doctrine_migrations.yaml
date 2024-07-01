@@ -1,0 +1,4 @@
+migrations:
+    namespace: 'App\Migrations'
+    table: 'migrations'
+    columnist_class: 'Doctrine\DBAL\Schema\Column'

@@ -1,0 +1,18 @@
+doctrine:
+    dbal:
+        driver: pdo_mysql
+        dname: '%env(DB_NAME)%'
+        host: '%env(DB_HOST)%'
+        port: '%env(DB_PORT)%'
+        user: '%env(DB_USER)%'
+        password: '%env(DB_PASSWORD)%'
+        charset: utf8mb4
+    orm:
+        auto_generate_proxy_classes: true
+        mappings:
+            App:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Entity'
+                namespace: 'App\Entity'
+                alias: App

@@ -12,4 +12,4 @@ echo "🎬 artisan commands"
 
 echo "🎬 start supervisord"
 
-supervisord -c $APP_PATH/.docker/php/supervisor.conf
+supervisord -c $APP_PATH/.docker/config/supervisord.conf

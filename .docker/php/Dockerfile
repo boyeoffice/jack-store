@@ -21,6 +21,7 @@ RUN apk add --no-cache libpq-dev && docker-php-ext-install pdo_mysql mysqli
 ARG UID
 ARG GID
 RUN apk --no-cache add shadow && \
+	addgroup -S symfony && adduser -S symfony -G symfony && \
 	groupmod -o -g ${GID} symfony && \
 	usermod -o -u ${UID} -g symfony symfony
 
@@ -35,7 +36,7 @@ RUN setcap 'cap_net_bind_service=+ep' /usr/local/bin/caddy
 
 # Supervisor
 RUN apk add --no-cache supervisor
-COPY ./.docker/php/supervisord.conf /etc/supervisord.conf
+COPY ./.docker/config/supervisord.conf /etc/supervisord.conf
 
 # Source code
 ENV APP_PATH=/srv/app
@@ -57,7 +58,7 @@ RUN if [ ${BUILD_MODE} = dev ]; \
 RUN chown -R symfony:symfony ${APP_PATH}/vendor/
 COPY ./.docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
 
-EXPOSE 80
+EXPOSE ${HTTP_PORT}
 
 COPY ./.docker/entrypoint.sh /
 

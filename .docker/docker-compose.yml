@@ -28,9 +28,7 @@ services:
         GID: '${GID:-1000}'
     container_name: jack_php
     ports:
-      - target: 80
-        published: ${HTTP_PORT:-8080}
-        protocol: tcp
+      - ${HTTP_PORT:-8080}:80
     #environment:
       #DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:${MYSQL_PORT}/${MYSQL_DATABASE}
     volumes:
